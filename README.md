@@ -33,7 +33,7 @@ Open a command window, run these scripts
 ## Technology Used
 
 1. Ethereum
-2. Truffle with drizzle
+2. Truffle with Drizzle
 3. IPFS with Infura
 4. Metamask
 5. Google Vision
