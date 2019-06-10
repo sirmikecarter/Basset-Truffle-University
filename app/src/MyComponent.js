@@ -1,10 +1,6 @@
 import React, {Component} from "react";
 
-import {
-  AccountData,
-  ContractData,
-  ContractForm,
-} from "drizzle-react-components";
+import {AccountData, ContractData, ContractForm,} from "drizzle-react-components";
 
 import BassetContract from './contracts/BassetContract.json';
 import logo from "./logo.png";
@@ -157,11 +153,7 @@ constructor(props, context) {
             return contractOperatorInstance.setItem(ipfsHash[0].hash,this.state.itemNameGuess[0], {from: this.props.accounts[0]})
           }).then((result) => {
             console.log(result)
-            if (result === "0x0000000000000000000000000000000000000000" ){
-                // console.log(result)
-            }else {
-              this.setState({ipfsHash:ipfsHash[0].hash });
-            }
+            this.setState({ipfsHash:ipfsHash[0].hash });            
           })
         })
 
@@ -190,7 +182,7 @@ constructor(props, context) {
           <p>Hash: <a href={'https://gateway.ipfs.io/ipfs/'+ this.state.ipfsHash} target="_blank">{this.state.ipfsHash}</a></p>
           <p>Item Name Guess #1: {this.state.itemNameGuess}</p>
           <p>Item Name Guess #2: {this.state.itemCategoryGuess}</p>
-          <p><button bsStyle="primary" type="submit">Save Item</button></p>
+          <p><button type="submit">Save Item</button></p>
           </form>
       <hr/>
           <p>
