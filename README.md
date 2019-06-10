@@ -23,7 +23,7 @@ Open a command window, run these scripts
 ## Metamask
 
 1. Make sure Metamask is using the local test blockchain ( http://127.0.0.1:9545 )
-2. Import private key from local blockchain (truffle develop)
+2. Import Account with private key from local blockchain instance (truffle develop window)
 
 ## Known Issues
 
