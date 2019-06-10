@@ -1,4 +1,4 @@
 export default {
-    googleClientId  : "",
-    googleVision : ""
+  googleClientId  : "",
+  googleVision : ""
 }
