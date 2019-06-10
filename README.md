@@ -2,15 +2,6 @@
 
 BAsset is a decentralized application (DApp) that tracks your belongings and gives a fair market value.
 
-## Technology Used
-
-1. Ethereum
-2. Truffle with drizzle
-3. IPFS with Infura
-4. Metamask
-5. Google Vision
-6. eBay API (coming soon)
-
 ## Installation Steps
 
 ## Main Directory - Commands - To Run local test blockchain
@@ -38,3 +29,12 @@ Open a command window, run these scripts
 
 1. Firewall blocks IPFS on some machines
 2. Wrong Nonce when trying to add an item
+
+## Technology Used
+
+1. Ethereum
+2. Truffle with drizzle
+3. IPFS with Infura
+4. Metamask
+5. Google Vision
+6. eBay API (coming soon)
