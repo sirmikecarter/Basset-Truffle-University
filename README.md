@@ -1,6 +1,6 @@
 ## Truffle University Project - BlockchainAsset.me (BAsset)
 
-BAsset is a decentralized application (DApp) that tracks and gives a fair market value of your belongings.
+BAsset is a decentralized application (DApp) that tracks your belongings and gives a fair market value.
 
 ## Technology Used
 
