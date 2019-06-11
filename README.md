@@ -6,7 +6,7 @@ BAsset is a decentralized application (DApp) that tracks your belongings and giv
 
 ## Main Directory - Commands - To Run local test blockchain
 
-Open a command window, run these scripts
+Open a command window #1, run these scripts
 
 1. npm install -d
 2. truffle develop
@@ -14,21 +14,21 @@ Open a command window, run these scripts
 
 ## /app Directory - Commands - To Run local web server
 
-Open a command window, run these scripts
+Open a command window #2, run these scripts
 
 1. npm install -d
-2. Add Google API credentials in app/config.js (contact me for keys)
+2. Add Google API credentials in app/src/config.js (contact me for keys)
 3. npm start
 
 ## Metamask
 
 1. Make sure Metamask is using the local test blockchain ( http://127.0.0.1:9545 )
-2. Import Account with private key from local blockchain instance (truffle develop window)
+2. Import Account with private key from local blockchain instance (truffle develop window #1)
 
 ## Known Issues
 
 1. Firewall blocks IPFS on some machines
-2. Wrong Nonce when trying to add an item from a second Account
+2. Wrong Nonce error when trying to add an item from a second Account
 
 ## Technology Used
 
