@@ -23,17 +23,24 @@ constructor(props, context) {
     ethAddress:'',
     transactionHash:'',
     txReceipt: '',
-    ImageResults: 'Results Will Show Here',
-    files: [], itemName: '', itemNameGuess: [], itemCategory: [],  itemCategoryGuess: [], imagePreview: ''
+    ImageResults: 'Image Results Will Show Here',
+    files: [], itemName: '', itemNameGuess: [], itemCategory: [],  itemCategoryGuess: [], imagePreview: '', account: '',showDiv: '',
   };
 //console.log(this.props.BassetContract)
   //this.contracts = context.drizzle.contracts
+
 }
 
   componentWillMount() {
+
       getWeb3
       .then(results => {
         this.setState({web3: results.web3})
+
+        // this.state.web3.eth.getAccounts((error, accounts) => {
+        //     console.log(accounts)
+        //     this.setState({account: accounts[0]})
+        // })
 
         const contractOperator = contract(BassetContract)
         var contractOperatorInstance
@@ -42,7 +49,7 @@ constructor(props, context) {
         this.state.web3.eth.getAccounts((error, accounts) => {
           contractOperator.deployed().then((instance) => {
             contractOperatorInstance = instance
-            return contractOperatorInstance.storedHash.call({from: this.props.accounts[0]})
+            return contractOperatorInstance.storedHash.call({from: accounts[0]})
           }).then((result) => {
             //console.log(result)
             this.setState({ipfsHash:result });
@@ -55,18 +62,21 @@ constructor(props, context) {
       })
     }
 
+    componentDidMount(){
+      // Get accounts.
+
+    }
+
     usercaptureFile =(event) => {
       event.stopPropagation()
       event.preventDefault()
       const files = event.target.files[0]
 
-
-
       const reader = new FileReader()
       reader.onload = (event) => {
         this.convertToBuffer(reader)
         this.setState({files});
-        this.setState({ImageResults:'Results Pending...' });
+        this.setState({ImageResults:'Image Results Pending...' });
         this.setState({itemNameGuess:[] });
         this.setState({itemCategoryGuess:[] });
 
@@ -135,7 +145,9 @@ constructor(props, context) {
 
       console.log(this.state.itemNameGuess)
       console.log(this.state.itemCategoryGuess)
-      this.setState({ImageResults:'Results Complete' });
+      this.setState({ImageResults:'Image Results Complete' });
+      this.setState({showDiv: 'showButton' });
+
 
 
 
@@ -159,7 +171,7 @@ constructor(props, context) {
 
     onSubmit = async (event) => {
       event.preventDefault()
-
+      console.log(this.state.account)
     await ipfs.add(this.state.buffer, (err, ipfsHash) => {
         //console.log(err,ipfsHash);
         const contractOperator = contract(BassetContract)
@@ -169,7 +181,7 @@ constructor(props, context) {
         this.state.web3.eth.getAccounts((error, accounts) => {
           contractOperator.deployed().then((instance) => {
             contractOperatorInstance = instance
-            return contractOperatorInstance.setItem(ipfsHash[0].hash,this.state.itemNameGuess[0], {from: this.props.accounts[0]})
+            return contractOperatorInstance.setItem(ipfsHash[0].hash,this.state.itemNameGuess[0], {from: accounts[0]})
           }).then((result) => {
             console.log(result)
             this.setState({ipfsHash:ipfsHash[0].hash });
@@ -180,6 +192,8 @@ constructor(props, context) {
       };
 
   render() {
+
+    const { showDiv } = this.state
 
     return (
 
@@ -194,23 +208,31 @@ constructor(props, context) {
           <AccountData accountIndex="0" units="ether" precision="3" />
         </div>
         <div className="section">
+        <hr/>
           <h2>Select a Picture to add to your Inventory</h2>
           <form onSubmit={this.onSubmit}>
           <p><input type = "file" onChange = {this.usercaptureFile}/></p>
        <hr/>
-          <strong>{this.state.ImageResults}</strong>
-          <p>Name Guess #1: </p>
+         { showDiv === 'showButton' && (
+         <div>
+           <p><button type="submit">Save Item</button></p>
+             <i style={{ color: 'green' }}>(Click Save Item)</i>
+             <br/>
+             <i style={{ color: 'green' }}>(the Image is sent to IPFS.Infura.io and the Hash returned is saved)</i>
+             <br/>
+             <i style={{ color: 'green' }}>(first item in Name Guess #1 will be saved)</i>
+             <br/>
+             <i style={{ color: 'green' }}>(need to add the ability for the user to pick any Name of the item)</i>
+             <hr/>
+         </div>   )}
+          <strong style={{ color: 'red' }}>{this.state.ImageResults}</strong>
+          <p>Item Name Guess #1: </p>
           <ul>{this.state.itemNameGuess.map(f => <li key={f}>{f}</li>)}</ul>
-          <p>Name Guess #2: </p>
+          <p>Item Name Guess #2: </p>
           <ul>{this.state.itemCategoryGuess.map(f => <li key={f}>{f}</li>)}</ul>
-       <hr/>
-          <p><button type="submit">Save Item</button></p>
-            <i>(first item in Name Guess #1 will be added to the blockchain)</i>
-            <br/>
-            <i>(need to add the ability for the user to pick a Name of the item)</i>      
-          </form>
+      </form>
       <hr/>
-        <h2>Blockchain Data</h2>
+        <h2>Blockchain Contract Data</h2>
           <p>
             <strong>Stored Hash: </strong>
             <ContractData contract="BassetContract" method="storedHash"  />
@@ -221,7 +243,7 @@ constructor(props, context) {
             <ContractData contract="BassetContract" method="storedName"  />
           </p>
           <hr/>
-          <strong>Update Fields Manually: </strong>
+          <strong>Update Contract Manually: </strong>
           <ContractForm contract="BassetContract" method="setItem" />
         </div>
       </div>
