@@ -28,7 +28,7 @@ Open a command window, run these scripts
 ## Known Issues
 
 1. Firewall blocks IPFS on some machines
-2. Wrong Nonce when trying to add an item
+2. Wrong Nonce when trying to add an item from a second Account
 
 ## Technology Used
 
