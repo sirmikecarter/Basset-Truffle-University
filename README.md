@@ -28,7 +28,8 @@ Open a command window #2, run these scripts
 ## Known Issues
 
 1. Firewall blocks IPFS on some machines
-2. Wrong Nonce error when trying to add an item from a second Account
+2. ~~Wrong Nonce error when trying to add an item from a second Account~~ (Fixed: Transactions need to be reset in Metamask, Settings->Advanced->Reset Account)
+3. IPFS stores buffer text not image
 
 ## Technology Used
 

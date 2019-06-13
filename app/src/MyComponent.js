@@ -171,8 +171,8 @@ constructor(props, context) {
 
     onSubmit = async (event) => {
       event.preventDefault()
-      console.log(this.state.account)
-    await ipfs.add(this.state.buffer, (err, ipfsHash) => {
+      console.log(this.state.buffer)
+    await ipfs.add(this.state.buffer, { buffer: true }, (err, ipfsHash) => {
         //console.log(err,ipfsHash);
         const contractOperator = contract(BassetContract)
         var contractOperatorInstance
@@ -231,6 +231,7 @@ constructor(props, context) {
           <p>Item Name Guess #2: </p>
           <ul>{this.state.itemCategoryGuess.map(f => <li key={f}>{f}</li>)}</ul>
       </form>
+      <p><img src={this.state.buffer} alt="picture" height="100" width="100" /></p>
       <hr/>
         <h2>Blockchain Contract Data</h2>
           <p>
