@@ -24,7 +24,7 @@ constructor(props, context) {
     transactionHash:'',
     txReceipt: '',
     ImageResults: 'Image Results Will Show Here',
-    files: [], itemName: '', itemNameGuess: [], itemCategory: [],  itemCategoryGuess: [], imagePreview: '', account: '',showDiv: '',
+    files: [], itemName: '', itemNameGuess: [], itemCategory: [],  itemCategoryGuess: [], showDiv: '',
   };
 //console.log(this.props.BassetContract)
   //this.contracts = context.drizzle.contracts
@@ -36,11 +36,6 @@ constructor(props, context) {
       getWeb3
       .then(results => {
         this.setState({web3: results.web3})
-
-        // this.state.web3.eth.getAccounts((error, accounts) => {
-        //     console.log(accounts)
-        //     this.setState({account: accounts[0]})
-        // })
 
         const contractOperator = contract(BassetContract)
         var contractOperatorInstance
@@ -79,9 +74,6 @@ constructor(props, context) {
         this.setState({ImageResults:'Image Results Pending...' });
         this.setState({itemNameGuess:[] });
         this.setState({itemCategoryGuess:[] });
-
-
-      //this.setState({imagePreview: files[0].preview});
 
       vision.init({ auth: config.googleVision})
 
@@ -172,8 +164,17 @@ constructor(props, context) {
     onSubmit = async (event) => {
       event.preventDefault()
       console.log(this.state.buffer)
+
     await ipfs.add(this.state.buffer, { buffer: true }, (err, ipfsHash) => {
         //console.log(err,ipfsHash);
+        var ipfsHashSent
+
+        if (ipfsHashSent === undefined){
+        ipfsHashSent = 'QmbyizSHLirDfZhms75tdrrdiVkaxKvbcLpXzjB5k34a31'
+        }else{
+              ipfsHashSent = ipfsHash[0].hash
+        }
+
         const contractOperator = contract(BassetContract)
         var contractOperatorInstance
         contractOperator.setProvider(this.state.web3.currentProvider)
@@ -181,10 +182,10 @@ constructor(props, context) {
         this.state.web3.eth.getAccounts((error, accounts) => {
           contractOperator.deployed().then((instance) => {
             contractOperatorInstance = instance
-            return contractOperatorInstance.setItem(ipfsHash[0].hash,this.state.itemNameGuess[0], {from: accounts[0]})
+            return contractOperatorInstance.setItem(ipfsHashSent,this.state.itemNameGuess[0], {from: accounts[0]})
           }).then((result) => {
             console.log(result)
-            this.setState({ipfsHash:ipfsHash[0].hash });
+            this.setState({ipfsHash:ipfsHashSent });
           })
         })
 
@@ -224,6 +225,7 @@ constructor(props, context) {
              <br/>
              <i style={{ color: 'green' }}>(need to add the ability for the user to pick any Name of the item)</i>
              <hr/>
+             <p><img src={this.state.buffer} alt="inventory" height="100" width="100" /></p>
          </div>   )}
           <strong style={{ color: 'red' }}>{this.state.ImageResults}</strong>
           <p>Item Name Guess #1: </p>
@@ -231,7 +233,6 @@ constructor(props, context) {
           <p>Item Name Guess #2: </p>
           <ul>{this.state.itemCategoryGuess.map(f => <li key={f}>{f}</li>)}</ul>
       </form>
-      <p><img src={this.state.buffer} alt="picture" height="100" width="100" /></p>
       <hr/>
         <h2>Blockchain Contract Data</h2>
           <p>
