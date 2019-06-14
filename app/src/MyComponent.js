@@ -167,7 +167,7 @@ constructor(props, context) {
 
     await ipfs.add(this.state.buffer, { buffer: true }, (err, ipfsHash) => {
         //console.log(err,ipfsHash);
-        var ipfsHashSent
+        var ipfsHashSent = '123'
 
         if (ipfsHashSent === undefined){
         ipfsHashSent = 'QmbyizSHLirDfZhms75tdrrdiVkaxKvbcLpXzjB5k34a31'
