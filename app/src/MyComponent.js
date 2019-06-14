@@ -24,11 +24,12 @@ constructor(props, context) {
     transactionHash:'',
     txReceipt: '',
     ImageResults: 'Image Results Will Show Here',
+    itemNameSelected: '',
     files: [], itemName: '', itemNameGuess: [], itemCategory: [],  itemCategoryGuess: [], showDiv: '',
   };
 //console.log(this.props.BassetContract)
   //this.contracts = context.drizzle.contracts
-
+  this.handleChange = this.handleChange.bind(this);
 }
 
   componentWillMount() {
@@ -182,7 +183,7 @@ constructor(props, context) {
         this.state.web3.eth.getAccounts((error, accounts) => {
           contractOperator.deployed().then((instance) => {
             contractOperatorInstance = instance
-            return contractOperatorInstance.setItem(ipfsHashSent,this.state.itemNameGuess[0], {from: accounts[0]})
+            return contractOperatorInstance.setItem(ipfsHashSent,this.state.itemNameSelected, {from: accounts[0]})
           }).then((result) => {
             console.log(result)
             this.setState({ipfsHash:ipfsHashSent });
@@ -191,6 +192,10 @@ constructor(props, context) {
 
         })
       };
+
+    handleChange(event) {
+      this.setState({itemNameSelected: event.target.value});
+    };
 
   render() {
 
@@ -229,7 +234,7 @@ constructor(props, context) {
          </div>   )}
           <strong style={{ color: 'red' }}>{this.state.ImageResults}</strong>
           <p>Item Name Guess #1: </p>
-          <ul>{this.state.itemNameGuess.map(f => <li key={f}>{f}</li>)}</ul>
+          <ul><select required onChange={this.handleChange} value={this.state.itemNameSelected}>{this.state.itemNameGuess.map(f => <option value={f}>{f}</option>)}</select></ul>
           <p>Item Name Guess #2: </p>
           <ul>{this.state.itemCategoryGuess.map(f => <li key={f}>{f}</li>)}</ul>
       </form>
