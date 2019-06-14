@@ -169,7 +169,7 @@ constructor(props, context) {
         //console.log(err,ipfsHash);
         var ipfsHashSent = '123'
 
-        if (ipfsHashSent === undefined){
+        if (ipfsHash[0].hash === undefined){
         ipfsHashSent = 'QmbyizSHLirDfZhms75tdrrdiVkaxKvbcLpXzjB5k34a31'
         }else{
               ipfsHashSent = ipfsHash[0].hash
