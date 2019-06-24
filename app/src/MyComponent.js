@@ -88,7 +88,7 @@ grabData = async () => {
 
       if (itemCount !== null){
 
-        for (var i = 0; i < itemCount.toNumber(); i++) {
+        for (var i = 0; i < itemCount; i++) {
         const itemResult = await this.state.contractInstance.methods.getUserItemHash(i).call({from: this.state.address})
         //console.log(itemCount.toNumber())
         //console.log(itemResult)
@@ -111,13 +111,13 @@ grabData = async () => {
 
         if (this.state.ipfsHash !== null){
           axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
-          //console.log(res)
-          if(res.data !== undefined)
-            {
-              this.convertToBufferAfter(res.data)
-            }else{
-              this.setState({itemInvSelectedBuffer: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
-            }
+
+          if(res.headers["content-type"] = 'image/jpeg, application/json; charset=utf-8'){
+            this.setState({itemInvSelectedBuffer: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
+          }else{
+            this.convertToBufferInv(res.data)
+          }
+
           });
         }
     }
@@ -136,12 +136,12 @@ grabNewData = async () => {
       if (this.state.ipfsHash !== null){
             axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
               //console.log(res)
-              if(res.data !== undefined)
-              {
-                this.convertToBufferAfter(res.data)
-              }else{
+              if(res.headers["content-type"] = 'image/jpeg, application/json; charset=utf-8'){
                 this.setState({itemInvSelectedBuffer: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
+              }else{
+                this.cconvertToBufferInv(res.data)
               }
+
             });
       }
 
@@ -154,12 +154,12 @@ setData = async () => {
 
       axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
         //console.log(res)
-        if(res.data !== undefined)
-        {
-          this.convertToBufferAfter(res.data)
-        }else{
+        if(res.headers["content-type"] = 'image/jpeg, application/json; charset=utf-8'){
           this.setState({itemInvSelectedBuffer: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
+        }else{
+          this.convertToBufferInv(res.data)
         }
+
       });
 
       this.state.contractInstance.methods.setItem(this.state.ipfsHash,this.state.itemCategorySelected).send({from: this.state.address})
@@ -205,7 +205,7 @@ usercaptureFile =(event) => {
       const reader = new FileReader()
       reader.onload = (event) => {
           //console.log(reader)
-          this.convertToBuffer(reader)
+          this.convertToBufferAdd(reader)
           this.setState({files});
           this.setState({imageResults:'Image Results Pending...' });
           this.setState({itemCategoryGuess1:[] });
@@ -286,14 +286,14 @@ usercaptureFile =(event) => {
       reader.readAsDataURL(files);
 };
 
-convertToBuffer = async(reader) => {
+convertToBufferAdd = async(reader) => {
       //file is converted to a buffer for upload to IPFS
       const buffer = await Buffer.from(reader.result);
       //set this buffer-using es6 syntax
       this.setState({itemSelectedBuffer: buffer});
 };
 
-convertToBufferAfter = async(reader) => {
+convertToBufferInv= async(reader) => {
       //file is converted to a buffer for upload to IPFS
       const buffer = await Buffer.from(reader);
       //set this buffer-using es6 syntax
@@ -303,7 +303,12 @@ convertToBufferAfter = async(reader) => {
 pushToIPFS = (e) => {
       return new Promise((resolve, reject) => {
                ipfs.add(this.state.itemSelectedBuffer, (err, ipfsHash) => {
-                 resolve(ipfsHash[0].hash);
+                 if(!err){
+                   resolve(ipfsHash[0].hash);
+                 }else {
+                   resolve('QmbyizSHLirDfZhms75tdrrdiVkaxKvbcLpXzjB5k34a31');
+                 }
+
              })
       });
   }
