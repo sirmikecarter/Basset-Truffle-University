@@ -18,7 +18,7 @@ import createContractCall$ from "@drizzle-utils/contract-call-stream";
 import createContractState$ from "@drizzle-utils/contract-state-stream";
 import {AccountData, ContractData, ContractForm,} from "drizzle-react-components";
 
-import logo from "./logo.png";
+import logo from "./basset.jpg";
 
 class MyComponent extends Component {
 
@@ -30,10 +30,11 @@ constructor(props, context) {
         ipfsHash:'', ipfsHashSave:'',
         itemHash: [], itemHashSelected: '',
         files: [], itemSelectedBuffer:'', itemInvSelectedBuffer:'',
-        imageResults: 'Image Results Will Show Here',
+        imageResults: 'Estimated Price and Image Results Will Show Here',
         itemCategorySelected: '',itemCategorySelectedSave: '',
         itemCategory: '', itemCategoryGuess1: [], itemCategoryGuess2: [],
         web3:'', address: '', contractInstance:'',
+        itemCount: 0,
       };
 
       this.handleChange = this.handleChange.bind(this);
@@ -73,7 +74,7 @@ grabData = async () => {
       this.setState({itemCategoryGuess1: [] });
       this.setState({itemSelectedBuffer: '' });
       this.setState({showDiv: null });
-      this.setState({imageResults: 'Image Results Will Show Here' });
+      this.setState({imageResults: 'Estimated Price and Image Results Will Show Here' });
 
       const resultHashIndex = await this.state.contractInstance.methods.getUserItemHash(0).call({from: this.state.address})
 
@@ -82,13 +83,15 @@ grabData = async () => {
       //     console.log(error)
       // });
 
-      const itemCount = await this.state.contractInstance.methods.getUserItemCount().call({from: this.state.address})
+      const itemCountResult = await this.state.contractInstance.methods.getUserItemCount().call({from: this.state.address})
 
       var itemHashArray = this.state.itemHash.slice();
 
-      if (itemCount !== null){
+      if (itemCountResult !== null){
 
-        for (var i = 0; i < itemCount; i++) {
+        this.setState({itemCount: itemCountResult.toNumber()});
+
+        for (var i = 0; i < itemCountResult; i++) {
         const itemResult = await this.state.contractInstance.methods.getUserItemHash(i).call({from: this.state.address})
         //console.log(itemCount.toNumber())
         //console.log(itemResult)
@@ -112,11 +115,8 @@ grabData = async () => {
         if (this.state.ipfsHash !== null){
           axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
 
-          if(res.headers["content-type"] = 'image/jpeg, application/json; charset=utf-8'){
-            this.setState({itemInvSelectedBuffer: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
-          }else{
             this.convertToBufferInv(res.data)
-          }
+            this.setState({itemInvSelectedBuffer2: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
 
           });
         }
@@ -129,6 +129,10 @@ grabNewData = async () => {
       this.setState({ipfsHash:this.state.itemHashSelected });
       this.setState({ipfsHashSave:this.state.itemHashSelected});
 
+      const itemCountResult = await this.state.contractInstance.methods.getUserItemCount().call({from: this.state.address})
+
+      this.setState({itemCount: itemCountResult.toNumber()});
+
       const resultHashName = await this.state.contractInstance.methods.getUserItemAttributes(this.state.ipfsHash).call({from: this.state.address})
 
       this.setState({itemCategorySelectedSave: resultHashName });
@@ -136,11 +140,8 @@ grabNewData = async () => {
       if (this.state.ipfsHash !== null){
             axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
               //console.log(res)
-              if(res.headers["content-type"] = 'image/jpeg, application/json; charset=utf-8'){
-                this.setState({itemInvSelectedBuffer: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
-              }else{
-                this.cconvertToBufferInv(res.data)
-              }
+              this.convertToBufferInv(res.data)
+              this.setState({itemInvSelectedBuffer2: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
 
             });
       }
@@ -154,11 +155,8 @@ setData = async () => {
 
       axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
         //console.log(res)
-        if(res.headers["content-type"] = 'image/jpeg, application/json; charset=utf-8'){
-          this.setState({itemInvSelectedBuffer: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
-        }else{
-          this.convertToBufferInv(res.data)
-        }
+        this.convertToBufferInv(res.data)
+        this.setState({itemInvSelectedBuffer2: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
 
       });
 
@@ -172,13 +170,15 @@ setData = async () => {
 
         this.setState({itemHash: itemHashArray});
 
-        this.setState({imageResults:'Complete' });
+        this.setState({imageResults:'Fetching Complete' });
+        this.setState({itemCount: this.state.itemCount + 1});
+        this.setState({showDiv: null });
 
 }
 
 onSaveImageSubmit = async (event) => {
       event.preventDefault()
-      this.setState({imageResults:'Waiting on IPFS..' });
+      this.setState({imageResults:'Fetching IPFS..' });
       const ipfsHash = await this.pushToIPFS();
 
       if(ipfsHash !== null)
@@ -207,7 +207,7 @@ usercaptureFile =(event) => {
           //console.log(reader)
           this.convertToBufferAdd(reader)
           this.setState({files});
-          this.setState({imageResults:'Image Results Pending...' });
+          this.setState({imageResults:'Fetching Estimated Price and Image Results...' });
           this.setState({itemCategoryGuess1:[] });
           this.setState({itemCategoryGuess2:[] });
 
@@ -273,7 +273,7 @@ usercaptureFile =(event) => {
           itemCategoryGuess2: itemCategoryArray2
         });
 
-          this.setState({imageResults:'Image Results Complete' });
+          this.setState({imageResults:'Estimated Price and Image Results Complete' });
           this.setState({showDiv: 'showButton' });
           this.setState({itemCategorySelected: this.refs.itemCategorySelected.value });
 
@@ -321,8 +321,8 @@ render() {
 
         <div className="App">
           <div>
-            <img src={logo} alt="drizzle-logo" />
-            <h1>BlockchainAsset.me</h1>
+            <img src={logo} alt="drizzle-logo" height="200" width="200" />
+            <h1>BlockchainAsset.me (BAsset)</h1>
             <p>Home Inventory DaPP - Keep track of your Stuff!</p>
           </div>
           <div className="section">
@@ -333,10 +333,19 @@ render() {
           <hr/>
             <h2>Select a Picture to add to your Inventory</h2>
             <form onSubmit={this.onSaveImageSubmit}>
+            <p>Enter a descriptive name for your item: <input type = "text" /></p>
             <p><input type = "file" onChange = {this.usercaptureFile}/></p>
          <hr/>
+         <strong style={{ color: 'red' }}>{this.state.imageResults}</strong>
            { showDiv === 'showButton' && (
            <div>
+             <p>Estimated Market Value: $100.00</p>
+             <p>Item Category Guess: </p>
+             <ul><select required onChange={this.handleChange} value={this.state.itemCategorySelected} ref="itemCategorySelected">{this.state.itemCategoryGuess1.map(f => <option value={f} key={f.id}>{f}</option>)}</select></ul>
+             <p>Item Name: </p>
+             <p><img src={this.state.itemSelectedBuffer} alt="inventory" height="100" width="100" /></p>
+             <hr/>
+             <strong style={{ color: 'red' }}>{this.state.imageResults}</strong>
              <p><button type="submit">Save Item</button></p>
                <i style={{ color: 'green' }}>(Click Save Item)</i>
                <br/>
@@ -344,22 +353,29 @@ render() {
                <br/>
                <i style={{ color: 'green' }}>(Selected Item in the list box will will be saved)</i>
                <hr/>
-               <p><img src={this.state.itemSelectedBuffer} alt="inventory" height="100" width="100" /></p>
            </div>   )}
-            <strong style={{ color: 'red' }}>{this.state.imageResults}</strong>
-            <p>Item Category Guess: </p>
-            <ul><select required onChange={this.handleChange} value={this.state.itemCategorySelected} ref="itemCategorySelected">{this.state.itemCategoryGuess1.map(f => <option value={f}>{f}</option>)}</select></ul>
         </form>
         <hr/>
-          <h2>Inventory</h2>
-              <strong>Select Item: </strong>
-              <ul><select onChange={this.handleHashChange} value={this.state.itemHashSelected}>{this.state.itemHash.map(f => <option value={f} key={f}>{f}</option>)}</select></ul>
-              <br/>Stored Hash: <a href={'https://gateway.ipfs.io/ipfs/'+ this.state.ipfsHashSave} target="_blank" rel="noopener noreferrer">{this.state.ipfsHashSave}</a>
-            <p><img src={this.state.itemInvSelectedBuffer} alt="inventory" height="100" width="100" /></p>
+          <h2>Inventory - Total Assets: {this.state.itemCount}</h2>
+              <strong>Select Asset: </strong>
+              <ul><select onChange={this.handleHashChange} value={this.state.itemHashSelected}>{this.state.itemHash.map(k => <option value={k} key={k}>{k}</option>)}</select></ul>
+              <br/><strong>Stored Hash:</strong> <a href={'https://gateway.ipfs.io/ipfs/'+ this.state.ipfsHashSave} target="_blank" rel="noopener noreferrer">{this.state.ipfsHashSave}</a>
+            <p><img src={this.state.itemInvSelectedBuffer} alt="ItemPictureWithIPFS" height="100" width="100" /></p>
+            <p><img src={this.state.itemInvSelectedBuffer2} alt="ItemPictureWithOutIPFS" height="100" width="100" /></p>
+            <p>
+              <strong>Stored Name: </strong>
+
+              Unknown
+            </p>
             <p>
               <strong>Stored Category: </strong>
 
               {this.state.itemCategorySelectedSave}
+            </p>
+            <p>
+              <strong>Stored Price: </strong>
+
+              $100.00
             </p>
             <hr/>
             <div className="section">
