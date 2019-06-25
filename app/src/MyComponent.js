@@ -64,6 +64,14 @@ componentDidMount = async () => {
       }
 };
 
+componentDidUpdate = async () => {
+  const web3 = await getWeb3();
+  const instance = await getContractInstance({
+    web3,
+    artifact: BassetContract,
+  });
+}
+
 grabData = async () => {
       this.setState({itemHash: [] });
       this.setState({ipfsHash: '' });
@@ -75,6 +83,7 @@ grabData = async () => {
       this.setState({itemSelectedBuffer: '' });
       this.setState({showDiv: null });
       this.setState({imageResults: 'Estimated Price and Image Results Will Show Here' });
+      this.setState({itemCount: 0 });
 
       const resultHashIndex = await this.state.contractInstance.methods.getUserItemHash(0).call({from: this.state.address})
 
@@ -380,7 +389,7 @@ render() {
             <hr/>
             <div className="section">
             <strong>Update Stored Name Manually (Only if _storedHash Exists): </strong>
-                <ContractForm contract="BassetContract" method="setUseritemCategory" />
+                <ContractForm contract="BassetContract" method="setUseritemCategory" sendArgs={{from: this.state.address}} />
               </div>
           </div>
           <div className="App">
