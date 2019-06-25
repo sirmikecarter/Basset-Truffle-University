@@ -29,7 +29,7 @@ constructor(props, context) {
         showDiv: '',
         ipfsHash:'', ipfsHashSave:'',
         itemHash: [], itemHashSelected: '',
-        files: [], itemSelectedBuffer:'', itemInvSelectedBuffer:'',
+        files: [], itemSelectedBuffer:'', itemInvSelectedBuffer:'', itemInvSelectedBuffer2:'',
         imageResults: 'Estimated Price and Image Results Will Show Here',
         itemCategorySelected: '',itemCategorySelectedSave: '',
         itemCategory: '', itemCategoryGuess1: [], itemCategoryGuess2: [],
@@ -64,14 +64,6 @@ componentDidMount = async () => {
       }
 };
 
-componentDidUpdate = async () => {
-  const web3 = await getWeb3();
-  const instance = await getContractInstance({
-    web3,
-    artifact: BassetContract,
-  });
-}
-
 grabData = async () => {
       this.setState({itemHash: [] });
       this.setState({ipfsHash: '' });
@@ -79,6 +71,7 @@ grabData = async () => {
       this.setState({itemCategorySelected: '' });
       this.setState({itemCategorySelectedSave: '' });
       this.setState({itemInvSelectedBuffer: '' });
+      this.setState({itemInvSelectedBuffer2: '' });
       this.setState({itemCategoryGuess1: [] });
       this.setState({itemSelectedBuffer: '' });
       this.setState({showDiv: null });
@@ -98,12 +91,11 @@ grabData = async () => {
 
       if (itemCountResult !== null){
 
-        this.setState({itemCount: itemCountResult.toNumber()});
+        this.setState({itemCount: Number(itemCountResult)});
 
         for (var i = 0; i < itemCountResult; i++) {
         const itemResult = await this.state.contractInstance.methods.getUserItemHash(i).call({from: this.state.address})
-        //console.log(itemCount.toNumber())
-        //console.log(itemResult)
+
         if (itemHashArray.indexOf(itemResult) === -1) {
           itemHashArray.push(itemResult);
         }
@@ -140,7 +132,7 @@ grabNewData = async () => {
 
       const itemCountResult = await this.state.contractInstance.methods.getUserItemCount().call({from: this.state.address})
 
-      this.setState({itemCount: itemCountResult.toNumber()});
+      this.setState({itemCount: Number(itemCountResult)});
 
       const resultHashName = await this.state.contractInstance.methods.getUserItemAttributes(this.state.ipfsHash).call({from: this.state.address})
 
