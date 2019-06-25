@@ -33,6 +33,7 @@ constructor(props, context) {
         imageResults: 'Estimated Price and Image Results Will Show Here',
         itemCategorySelected: '',itemCategorySelectedSave: '',
         itemCategory: '', itemCategoryGuess1: [], itemCategoryGuess2: [],
+        itemNameInput: '',itemNameSelected: '', itemPrice: 100,
         web3:'', address: '', contractInstance:'',
         itemCount: 0,
       };
@@ -77,6 +78,9 @@ grabData = async () => {
       this.setState({showDiv: null });
       this.setState({imageResults: 'Estimated Price and Image Results Will Show Here' });
       this.setState({itemCount: 0 });
+      this.setState({itemNameSelected: '' });
+      this.setState({itemPriceSelected: '' });
+
 
       const resultHashIndex = await this.state.contractInstance.methods.getUserItemHash(0).call({from: this.state.address})
 
@@ -108,10 +112,18 @@ grabData = async () => {
           this.setState({ipfsHash:resultHashIndex});
           this.setState({ipfsHashSave:resultHashIndex});
 
-          const resultHashName = await this.state.contractInstance.methods.getUserItemAttributes(this.state.ipfsHash).call({from: this.state.address})
+          const resultHashName = await this.state.contractInstance.methods.getUserItemCategory(this.state.ipfsHash).call({from: this.state.address})
 
           this.setState({itemCategorySelected: resultHashName });
           this.setState({itemCategorySelectedSave: resultHashName });
+
+          const resultItemName = await this.state.contractInstance.methods.getUserItemName(this.state.ipfsHash).call({from: this.state.address})
+
+          this.setState({itemNameSelected: resultItemName });
+
+          const resultPrice = await this.state.contractInstance.methods.getUserItemPrice(this.state.ipfsHash).call({from: this.state.address})
+
+          this.setState({itemPriceSelected: resultPrice });
 
         if (this.state.ipfsHash !== null){
           axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
@@ -134,9 +146,17 @@ grabNewData = async () => {
 
       this.setState({itemCount: Number(itemCountResult)});
 
-      const resultHashName = await this.state.contractInstance.methods.getUserItemAttributes(this.state.ipfsHash).call({from: this.state.address})
+      const resultHashName = await this.state.contractInstance.methods.getUserItemCategory(this.state.ipfsHash).call({from: this.state.address})
 
       this.setState({itemCategorySelectedSave: resultHashName });
+
+      const resultItemName = await this.state.contractInstance.methods.getUserItemName(this.state.ipfsHash).call({from: this.state.address})
+
+      this.setState({itemNameSelected: resultItemName });
+
+      const resultPrice = await this.state.contractInstance.methods.getUserItemPrice(this.state.ipfsHash).call({from: this.state.address})
+
+      this.setState({itemPriceSelected: resultPrice });
 
       if (this.state.ipfsHash !== null){
             axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
@@ -152,7 +172,11 @@ grabNewData = async () => {
 setData = async () => {
       this.setState({ipfsHashSave:this.state.ipfsHash});
       this.setState({itemCategorySelectedSave:this.state.itemCategorySelected});
+      this.setState({itemNameSelected: this.state.itemNameInput });
       this.setState({itemInvSelectedBuffer: '' });
+
+      this.setState({itemPrice: 100 });
+      this.setState({itemPriceSelected: this.state.itemPrice });
 
       axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
         //console.log(res)
@@ -161,7 +185,7 @@ setData = async () => {
 
       });
 
-      this.state.contractInstance.methods.setItem(this.state.ipfsHash,this.state.itemCategorySelected).send({from: this.state.address})
+      this.state.contractInstance.methods.setItem(this.state.ipfsHash,this.state.itemCategorySelected,this.state.itemNameInput,Number(this.state.itemPrice)).send({from: this.state.address})
 
       var itemHashArray = this.state.itemHash.slice();
 
@@ -196,6 +220,10 @@ handleChange(event) {
 handleHashChange(event) {
       this.setState({itemHashSelected: event.target.value});
       this.grabNewData();
+};
+
+handleNameChange(event) {
+        this.setState({itemNameInput: event.target.value});
 };
 
 usercaptureFile =(event) => {
@@ -277,6 +305,10 @@ usercaptureFile =(event) => {
           this.setState({imageResults:'Estimated Price and Image Results Complete' });
           this.setState({showDiv: 'showButton' });
           this.setState({itemCategorySelected: this.refs.itemCategorySelected.value });
+          this.setState({itemNameSelected: this.state.itemNameInput });
+
+          this.setState({itemPrice: 100 });
+          this.setState({itemPriceSelected: this.state.itemPrice });
 
         }, (e) => {
         console.log('Error: ', e)
@@ -333,17 +365,19 @@ render() {
           <div className="section">
           <hr/>
             <h2>Select a Picture to add to your Inventory</h2>
-            <form onSubmit={this.onSaveImageSubmit}>
-            <p>Enter a descriptive name for your item: <input type = "text" /></p>
+            <form>
+            <p>Enter a descriptive name for your item: <input required type = "text" value={this.state.itemNameInput} onChange={this.handleNameChange.bind(this)}  /></p>
             <p><input type = "file" onChange = {this.usercaptureFile}/></p>
+            </form>
          <hr/>
+         <form onSubmit={this.onSaveImageSubmit}>
          <strong style={{ color: 'red' }}>{this.state.imageResults}</strong>
            { showDiv === 'showButton' && (
            <div>
-             <p>Estimated Market Value: $100.00</p>
+             <p>Estimated Market Value: ${this.state.itemPrice}</p>
              <p>Item Category Guess: </p>
              <ul><select required onChange={this.handleChange} value={this.state.itemCategorySelected} ref="itemCategorySelected">{this.state.itemCategoryGuess1.map(f => <option value={f} key={f.id}>{f}</option>)}</select></ul>
-             <p>Item Name: </p>
+             <p>Item Name: {this.state.itemNameSelected}</p>
              <p><img src={this.state.itemSelectedBuffer} alt="inventory" height="100" width="100" /></p>
              <hr/>
              <strong style={{ color: 'red' }}>{this.state.imageResults}</strong>
@@ -366,7 +400,7 @@ render() {
             <p>
               <strong>Stored Name: </strong>
 
-              Unknown
+              {this.state.itemNameSelected}
             </p>
             <p>
               <strong>Stored Category: </strong>
@@ -376,13 +410,17 @@ render() {
             <p>
               <strong>Stored Price: </strong>
 
-              $100.00
+              ${this.state.itemPriceSelected}
             </p>
             <hr/>
             <div className="section">
-            <strong>Update Stored Name Manually (Only if _storedHash Exists): </strong>
-                <ContractForm contract="BassetContract" method="setUseritemCategory" sendArgs={{from: this.state.address}} />
-              </div>
+            <strong>Update Stored Category Manually (Only if _storedHash Exists): </strong>
+              <ContractForm contract="BassetContract" method="setUseritemCategory" sendArgs={{from: this.state.address}} />
+            </div>
+            <div className="section">
+              <strong>Update Stored Name Manually (Only if _storedHash Exists): </strong>
+              <ContractForm contract="BassetContract" method="setUseritemName" sendArgs={{from: this.state.address}} />
+            </div>
           </div>
           <div className="App">
             <ToastContainer />
