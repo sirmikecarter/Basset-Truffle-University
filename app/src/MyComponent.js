@@ -38,8 +38,6 @@ constructor(props, context) {
         itemCount: 0,
       };
 
-      this.handleChange = this.handleChange.bind(this);
-      this.handleHashChange = this.handleHashChange.bind(this);
 }
 
 componentDidMount = async () => {
@@ -112,18 +110,18 @@ grabData = async () => {
           this.setState({ipfsHash:resultHashIndex});
           this.setState({ipfsHashSave:resultHashIndex});
 
-          const resultHashName = await this.state.contractInstance.methods.getUserItemCategory(this.state.ipfsHash).call({from: this.state.address})
+          // const resultHashName = await this.state.contractInstance.methods.getUserItemCategory(this.state.ipfsHash).call({from: this.state.address})
+          //
+          // this.setState({itemCategorySelected: resultHashName });
+          // this.setState({itemCategorySelectedSave: resultHashName });
 
-          this.setState({itemCategorySelected: resultHashName });
-          this.setState({itemCategorySelectedSave: resultHashName });
+          // const resultItemName = await this.state.contractInstance.methods.getUserItemName(this.state.ipfsHash).call({from: this.state.address})
+          //
+          // this.setState({itemNameSelected: resultItemName });
 
-          const resultItemName = await this.state.contractInstance.methods.getUserItemName(this.state.ipfsHash).call({from: this.state.address})
-
-          this.setState({itemNameSelected: resultItemName });
-
-          const resultPrice = await this.state.contractInstance.methods.getUserItemPrice(this.state.ipfsHash).call({from: this.state.address})
-
-          this.setState({itemPriceSelected: Number(resultPrice) });
+          // const resultPrice = await this.state.contractInstance.methods.getUserItemPrice(this.state.ipfsHash).call({from: this.state.address})
+          //
+          // this.setState({itemPriceSelected: Number(resultPrice) });
 
         if (this.state.ipfsHash !== null){
           axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
@@ -142,21 +140,21 @@ grabNewData = async () => {
       this.setState({ipfsHash:this.state.itemHashSelected });
       this.setState({ipfsHashSave:this.state.itemHashSelected});
 
-      const itemCountResult = await this.state.contractInstance.methods.getUserItemCount().call({from: this.state.address})
+      // const itemCountResult = await this.state.contractInstance.methods.getUserItemCount().call({from: this.state.address})
+      //
+      // this.setState({itemCount: Number(itemCountResult)});
 
-      this.setState({itemCount: Number(itemCountResult)});
+      // const resultHashName = await this.state.contractInstance.methods.getUserItemCategory(this.state.ipfsHash).call({from: this.state.address})
+      //
+      // this.setState({itemCategorySelectedSave: resultHashName });
 
-      const resultHashName = await this.state.contractInstance.methods.getUserItemCategory(this.state.ipfsHash).call({from: this.state.address})
+      // const resultItemName = await this.state.contractInstance.methods.getUserItemName(this.state.ipfsHash).call({from: this.state.address})
+      //
+      // this.setState({itemNameSelected: resultItemName });
 
-      this.setState({itemCategorySelectedSave: resultHashName });
-
-      const resultItemName = await this.state.contractInstance.methods.getUserItemName(this.state.ipfsHash).call({from: this.state.address})
-
-      this.setState({itemNameSelected: resultItemName });
-
-      const resultPrice = await this.state.contractInstance.methods.getUserItemPrice(this.state.ipfsHash).call({from: this.state.address})
-
-      this.setState({itemPriceSelected: Number(resultPrice) });
+      // const resultPrice = await this.state.contractInstance.methods.getUserItemPrice(this.state.ipfsHash).call({from: this.state.address})
+      //
+      // this.setState({itemPriceSelected: Number(resultPrice) });
 
       if (this.state.ipfsHash !== null){
             axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
@@ -170,20 +168,20 @@ grabNewData = async () => {
 }
 
 setData = async () => {
-      this.setState({ipfsHashSave:this.state.ipfsHash});
-      this.setState({itemCategorySelectedSave:this.state.itemCategorySelected});
-      this.setState({itemNameSelected: this.state.itemNameInput });
-      this.setState({itemInvSelectedBuffer: '' });
+      //this.setState({ipfsHashSave:this.state.ipfsHash});
+      //this.setState({itemCategorySelectedSave:this.state.itemCategorySelected});
+      //this.setState({itemNameSelected: this.state.itemNameInput });
+      //this.setState({itemInvSelectedBuffer: '' });
 
       this.setState({itemPrice: 100 });
-      this.setState({itemPriceSelected: this.state.itemPrice });
+      //this.setState({itemPriceSelected: this.state.itemPrice });
 
-      axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
-        //console.log(res)
-        this.convertToBufferInv(res.data)
-        this.setState({itemInvSelectedBuffer2: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
-
-      });
+      // axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
+      //   //console.log(res)
+      //   this.convertToBufferInv(res.data)
+      //   this.setState({itemInvSelectedBuffer2: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}` });
+      //
+      // });
 
       this.state.contractInstance.methods.setItem(this.state.ipfsHash,this.state.itemCategorySelected,this.state.itemNameInput,this.state.itemPriceSelected).send({from: this.state.address})
 
@@ -196,7 +194,7 @@ setData = async () => {
         this.setState({itemHash: itemHashArray});
 
         this.setState({imageResults:'Fetching Complete' });
-        this.setState({itemCount: this.state.itemCount + 1});
+        //this.setState({itemCount: this.state.itemCount + 1});
         this.setState({showDiv: null });
 
 }
@@ -376,7 +374,7 @@ render() {
            <div>
              <p>Estimated Market Value: ${this.state.itemPrice}</p>
              <p>Item Category Guess: </p>
-             <ul><select required onChange={this.handleChange} value={this.state.itemCategorySelected} ref="itemCategorySelected">{this.state.itemCategoryGuess1.map(f => <option value={f} key={f.id}>{f}</option>)}</select></ul>
+             <ul><select required onChange={this.handleChange.bind(this)} value={this.state.itemCategorySelected} ref="itemCategorySelected">{this.state.itemCategoryGuess1.map(f => <option value={f} key={f.id}>{f}</option>)}</select></ul>
              <p>Item Name: {this.state.itemNameSelected}</p>
              <p><img src={this.state.itemSelectedBuffer} alt="inventory" height="100" width="100" /></p>
              <hr/>
@@ -391,26 +389,23 @@ render() {
            </div>   )}
         </form>
         <hr/>
-          <h2>Inventory - Total Assets: {this.state.itemCount}</h2>
+          <h2>Inventory - Total Assets: <ContractData contract="BassetContract" method="getUserItemCount" methodArgs={[{from: this.state.address}]}  /></h2>
               <strong>Select Asset: </strong>
-              <ul><select onChange={this.handleHashChange} value={this.state.itemHashSelected}>{this.state.itemHash.map(k => <option value={k} key={k}>{k}</option>)}</select></ul>
+              <ul><select onChange={this.handleHashChange.bind(this)} value={this.state.itemHashSelected}>{this.state.itemHash.map(k => <option value={k} key={k}>{k}</option>)}</select></ul>
               <br/><strong>Stored Hash:</strong> <a href={'https://gateway.ipfs.io/ipfs/'+ this.state.ipfsHashSave} target="_blank" rel="noopener noreferrer">{this.state.ipfsHashSave}</a>
             <p><img src={this.state.itemInvSelectedBuffer} alt="ItemPictureWithIPFS" height="100" width="100" /></p>
             <p><img src={this.state.itemInvSelectedBuffer2} alt="ItemPictureWithOutIPFS" height="100" width="100" /></p>
             <p>
               <strong>Stored Name: </strong>
-
-              {this.state.itemNameSelected}
+              <ContractData contract="BassetContract" method="getUserItemName" methodArgs={[this.state.ipfsHashSave.toString(), {from: this.state.address}]}  />
             </p>
             <p>
               <strong>Stored Category: </strong>
-
-              {this.state.itemCategorySelectedSave}
+              <ContractData contract="BassetContract" method="getUserItemCategory" methodArgs={[this.state.ipfsHashSave.toString(), {from: this.state.address}]}  />
             </p>
             <p>
               <strong>Stored Price: </strong>
-
-              ${this.state.itemPriceSelected}
+              <ContractData contract="BassetContract" method="getUserItemPrice" methodArgs={[this.state.ipfsHashSave.toString(), {from: this.state.address}]}  />
             </p>
             <hr/>
             <div className="section">
