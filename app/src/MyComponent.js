@@ -123,7 +123,7 @@ grabData = async () => {
 
           const resultPrice = await this.state.contractInstance.methods.getUserItemPrice(this.state.ipfsHash).call({from: this.state.address})
 
-          this.setState({itemPriceSelected: resultPrice });
+          this.setState({itemPriceSelected: Number(resultPrice) });
 
         if (this.state.ipfsHash !== null){
           axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
@@ -156,7 +156,7 @@ grabNewData = async () => {
 
       const resultPrice = await this.state.contractInstance.methods.getUserItemPrice(this.state.ipfsHash).call({from: this.state.address})
 
-      this.setState({itemPriceSelected: resultPrice });
+      this.setState({itemPriceSelected: Number(resultPrice) });
 
       if (this.state.ipfsHash !== null){
             axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
@@ -185,7 +185,7 @@ setData = async () => {
 
       });
 
-      this.state.contractInstance.methods.setItem(this.state.ipfsHash,this.state.itemCategorySelected,this.state.itemNameInput,Number(this.state.itemPrice)).send({from: this.state.address})
+      this.state.contractInstance.methods.setItem(this.state.ipfsHash,this.state.itemCategorySelected,this.state.itemNameInput,this.state.itemPriceSelected).send({from: this.state.address})
 
       var itemHashArray = this.state.itemHash.slice();
 
