@@ -1,0 +1,14 @@
+{
+  "name": "Price Listing Node",
+  "version": "1.0.0",
+  "description": "Lists market price of an item",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "deploy": "gcloud app deploy"
+  },
+  "dependencies": {
+    "ebay-api": "^1.13.7",
+    "express": "^4.13.4"
+  }
+}

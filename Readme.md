@@ -20,6 +20,14 @@ Open a command window #2, run these scripts
 2. Add Google API credentials in app/src/config.js (contact me for keys)
 3. npm start
 
+## /app/priceapi Directory - Commands - To Run price web service
+
+Open a command window #3, run these scripts
+
+1. npm install -d
+2. Add ebay API credentials on line 42 (contact me for keys)
+3. node app.js
+
 ## Metamask
 
 1. Make sure Metamask is using the local test blockchain ( http://127.0.0.1:9545 )
@@ -38,4 +46,4 @@ Open a command window #2, run these scripts
 3. IPFS with Infura
 4. Metamask
 5. Google Vision
-6. eBay API (coming soon)
+6. eBay API
