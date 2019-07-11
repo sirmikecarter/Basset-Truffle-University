@@ -173,8 +173,10 @@ setData = async () => {
       this.setState({itemNameSelected: this.state.itemNameInput });
       this.setState({itemInvSelectedBuffer: '' });
 
-      this.setState({itemPrice: 100 });
+      //console.log(this.state.itemPrice)
       this.setState({itemPriceSelected: this.state.itemPrice });
+      this.setState({itemPrice: '' });
+      //console.log(this.state.itemPriceSelected)
 
       axios.get(`https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`).then(res => {
         //console.log(res)
@@ -305,8 +307,20 @@ usercaptureFile =(event) => {
           this.setState({itemCategorySelected: this.refs.itemCategorySelected.value });
           this.setState({itemNameSelected: this.state.itemNameInput });
 
-          this.setState({itemPrice: 100 });
-          this.setState({itemPriceSelected: this.state.itemPrice });
+          var self = this;
+
+          axios.get(`http://localhost:8080/price/${this.state.itemNameInput}`).then(res => {
+
+            var price = Math.round(res.data.avgPrice)
+            var price2 = Number(price)
+
+            self.setState({itemPrice: price2 });
+            self.setState({itemPriceSelected: self.state.itemPrice })
+            //console.log(res.data.avgPrice)
+
+          });
+
+          ;
 
         }, (e) => {
         console.log('Error: ', e)
@@ -409,7 +423,7 @@ render() {
             </p>
             <p>
               <strong>Stored Price: </strong>
-              {this.state.itemPriceSelected}
+              ${this.state.itemPriceSelected}
             </p>
             <hr/>
             <div className="section">
