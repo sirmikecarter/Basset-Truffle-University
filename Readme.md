@@ -38,6 +38,7 @@ Open a command window #3, run these scripts
 1. Firewall blocks IPFS on some machines
 2. ~~Wrong Nonce error when trying to add an item from a second Account~~ (Fixed: Transactions need to be reset in Metamask, Settings->Advanced->Reset Account)
 3. IPFS stores buffer text not image
+4. Moesif CORS needs to be turned On for local Price API
 
 ## Technology Used
 

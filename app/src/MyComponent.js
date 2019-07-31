@@ -33,7 +33,7 @@ constructor(props, context) {
         imageResults: 'Estimated Price and Image Results Will Show Here',
         itemCategorySelected: '',itemCategorySelectedSave: '',
         itemCategory: '', itemCategoryGuess1: [], itemCategoryGuess2: [],
-        itemNameInput: '',itemNameSelected: '', itemPrice: 100,
+        itemNameInput: '',itemNameSelected: '', itemPrice: 0,
         web3:'', address: '', contractInstance:'',
         itemCount: 0,
       };
