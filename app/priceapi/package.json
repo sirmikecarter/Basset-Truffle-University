@@ -8,7 +8,7 @@
     "deploy": "gcloud app deploy"
   },
   "dependencies": {
-    "ebay-api": "^1.13.7",
+    "ebay-api": "^7.1.3",
     "express": "^4.13.4"
   }
 }
